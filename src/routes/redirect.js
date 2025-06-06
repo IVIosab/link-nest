@@ -15,18 +15,7 @@ function getRequestInfo(req) {
 }
 
 export async function handleRedirect(req, res) {
-    const slug = req.params.slug;
-    const found = await db.select().from(links).where(eq(links.shortSlug, slug)).limit(1);
-
-    if (found.length === 0) {
-        return res.status(404).send("Short link not found.");
-    }
-
-    const link = found[0];
-
-    if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
-        return res.status(410).send("Link has expired.");
-    }
+    const link = req.link;
 
     if (link.passwordHash) {
         const { password } = req.query;
@@ -51,9 +40,11 @@ export async function handleRedirect(req, res) {
         clickedAt: new Date(),
     });
 
+    const newCount = link.clickCount + 1;
+
     await db
         .update(links)
-        .set({ clickCount: sql`${links.clickCount} + 1` })
+        .set({ clickCount: newCount })
         .where(eq(links.id, link.id));
 
 

@@ -6,3 +6,7 @@ export const createLinkSchema = z.object({
     expiresAt: z.coerce.date().optional(),
     password: z.string().min(4).max(64).optional(),
 });
+
+export const slugParamSchema = z.object({
+    slug: z.string().min(3),
+});
