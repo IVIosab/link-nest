@@ -1,0 +1,31 @@
+{
+  "name": "link-nest",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IVIosab/link-nest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IVIosab/link-nest/issues"
+  },
+  "homepage": "https://github.com/IVIosab/link-nest#readme",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "drizzle-orm": "^0.44.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "geoip-lite": "^1.4.10",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.1.5",
+    "qrcode": "^1.5.4",
+    "sqlite": "^5.1.1",
+    "zod": "^3.25.56"
+  }
+}
