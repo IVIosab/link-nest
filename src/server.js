@@ -1,12 +1,16 @@
 import express from "express";
 import router from "./routes/index.js";
 import { logger } from "./middlewares/logger.js";
+import { generalRateLimiter } from "./middlewares/rateLimit.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(logger);
+// for testing purposes only to be able to use ngrok
+// app.enable('trust proxy') 
 
+app.use(logger);
+app.use(generalRateLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

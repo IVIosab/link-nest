@@ -3,20 +3,19 @@ import { links, visits } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
+import geoip from "geoip-lite";
 
-// Helper to get request metadata
 function getRequestInfo(req) {
     return {
         ipAddress: req.ip,
         userAgent: req.headers["user-agent"] || "Unknown",
         referrer: req.get("referrer") || null,
-        country: null, // Could use a GeoIP service here
+        country: geoip.lookup(req.ip).country || null,
     };
 }
 
 export async function handleRedirect(req, res) {
     const link = req.link;
-
     if (link.passwordHash) {
         const { password } = req.query;
         if (!password) {

@@ -15,9 +15,7 @@ export const links = sqliteTable('links', {
     id: text('id').primaryKey(),
     originalUrl: text('original_url').notNull(),
     shortSlug: text('short_slug').notNull().unique(),
-    createdBy: text('created_by'),
-    // .notNull()
-    // .references(() => users.id), // Foreign key reference?
+    createdBy: text('created_by').notNull().references(() => users.id),
     createdAt: integer('created_at', { mode: 'timestamp' }).default(() => Date.now()),
     expiresAt: integer('expires_at', { mode: 'timestamp' }).default(null),
     clickCount: integer('click_count').default(0),
@@ -26,9 +24,7 @@ export const links = sqliteTable('links', {
 
 export const visits = sqliteTable('visits', {
     id: text('id').primaryKey(),
-    linkId: text('link_id')
-        .notNull()
-        .references(() => links.id), // Foreign key reference?
+    linkId: text('link_id').notNull().references(() => links.id),
     ipAddress: text('ip_address').notNull(),
     userAgent: text('user_agent').notNull(),
     referrer: text('referrer').default(null),

@@ -11,9 +11,17 @@ export const generalRateLimiter = rateLimit({
 
 // Specific limiter for shortening endpoint (e.g., 10 per 10 mins)
 export const shortenLimiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 minutes
+    windowMs: 10 * 60 * 1000,
     max: 10,
     message: "You have exceeded the link creation limit. Try again later.",
     standardHeaders: true,
     legacyHeaders: false,
+});
+
+export const authLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: "Too many SignIn/SignUp requests, please try again later.",
 });

@@ -2,11 +2,11 @@ import { db } from "../db/index.js";
 import { links } from "../db/schema.js";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
-import { createLinkSchema } from "../db/link.js";
+import { createLinkSchema } from "../db/zodObjects.js";
 import { eq } from "drizzle-orm";
 
 export async function createShortLink(req, res) {
-    const userId = req.session?.user?.id || null;
+    const userId = req.user.id;
     const parseResult = createLinkSchema.safeParse(req.body);
 
     if (!parseResult.success) {

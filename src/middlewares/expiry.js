@@ -1,5 +1,5 @@
 import { db } from "../db/index.js";
-import { links } from "../db/tables.js";
+import { links } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 
 export async function checkExpiry(req, res, next) {
@@ -18,6 +18,9 @@ export async function checkExpiry(req, res, next) {
     const link = found[0];
 
     if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+        await db
+            .delete(links)
+            .where(eq(links.id, link.id));
         return res.status(410).send("This link has expired.");
     }
 
