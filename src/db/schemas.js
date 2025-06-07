@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const registerSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
 export const createLinkSchema = z.object({
     originalUrl: z.string().url(),
     customSlug: z.string().min(3).max(32).optional(),
