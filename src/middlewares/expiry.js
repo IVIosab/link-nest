@@ -1,5 +1,5 @@
 import { db } from "../db/index.js";
-import { links } from "../db/schema.js";
+import { links } from "../db/tables.js";
 import { eq } from "drizzle-orm";
 
 export async function checkExpiry(req, res, next) {
