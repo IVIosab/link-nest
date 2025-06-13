@@ -4,13 +4,20 @@ import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { createLinkSchema } from "../db/zodObjects.js";
 import { eq } from "drizzle-orm";
+import { Request, Response } from "express";
 
-export async function createShortLink(req, res) {
+export async function createShortLink(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+    }
+
     const userId = req.user.id;
     const parseResult = createLinkSchema.safeParse(req.body);
 
     if (!parseResult.success) {
-        return res.status(400).json({ error: parseResult.error.flatten() });
+        res.status(400).json({ error: parseResult.error.flatten() });
+        return;
     }
 
     const { originalUrl, customSlug, expiresAt, password } = parseResult.data;
@@ -22,7 +29,8 @@ export async function createShortLink(req, res) {
         .where(eq(links.shortSlug, shortSlug));
 
     if (slugExists.length > 0) {
-        return res.status(409).json({ error: "Slug already in use." });
+        res.status(409).json({ error: "Slug already in use." });
+        return;
     }
 
     const passwordHash = password
@@ -31,16 +39,15 @@ export async function createShortLink(req, res) {
 
     await db.insert(links).values({
         id: nanoid(),
-        originalUrl,
-        shortSlug,
+        originalUrl: originalUrl,
+        shortSlug: shortSlug,
         createdBy: userId,
-        createdAt: new Date(),
-        expiresAt: expiresAt ?? null,
-        passwordHash,
-        clickCount: 0,
+        ...(expiresAt && {expiresAt: expiresAt.toISOString()}),
+        ...(passwordHash && {passwordHash: passwordHash}),
     });
 
-    return res.status(201).json({
+    res.status(201).json({
         shortUrl: `${req.protocol}://${req.get("host")}/${shortSlug}`,
     });
+    return;
 }

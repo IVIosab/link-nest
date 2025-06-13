@@ -4,11 +4,13 @@ import { emailPasswordSchema } from "../db/zodObjects.js";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
+import { Request, Response } from "express";
 
-export async function handleRegister(req, res) {
+export async function handleRegister(req: Request, res: Response): Promise<void> {
     const parseResult = emailPasswordSchema.safeParse(req.body);
     if (!parseResult.success) {
-        return res.status(400).json({ error: parseResult.error.flatten() });
+        res.status(400).json({ error: parseResult.error.flatten() });
+        return;
     }
 
     const { email, password } = parseResult.data;
@@ -20,7 +22,8 @@ export async function handleRegister(req, res) {
         .limit(1);
 
     if (existingUser.length > 0) {
-        return res.status(409).json({ error: "Email is already registered." });
+        res.status(409).json({ error: "Email is already registered." });
+        return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,8 +32,7 @@ export async function handleRegister(req, res) {
         id: nanoid(),
         email,
         hashedPassword,
-        createdAt: new Date(),
     });
 
-    return res.status(201).json({ message: "User registered successfully." });
+    res.status(201).json({ message: "User registered successfully." });
 }

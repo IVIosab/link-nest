@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import router from "./routes/index.js";
 import { logger } from "./middlewares/logger.js";
 import { generalRateLimiter } from "./middlewares/rateLimit.js";
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
     res.send("Welcome to LinkNest API!");
 });
 

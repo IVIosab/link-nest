@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
 import { emailPasswordSchema } from "../db/zodObjects.js";
@@ -8,10 +9,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export async function handleLogin (req, res){
+export async function handleLogin (req: Request, res: Response): Promise<void>{
     const parseResult = emailPasswordSchema.safeParse(req.body);
     if (!parseResult.success) {
-        return res.status(400).json({ error: parseResult.error.flatten() });
+        res.status(400).json({ error: parseResult.error.flatten() });
+        return;
     }
 
     const { email, password } = parseResult.data;
@@ -24,12 +26,14 @@ export async function handleLogin (req, res){
         .then(rows => rows[0]);
 
     if (!user) {
-        return res.status(401).json({ error: "Invalid email or password." });
+        res.status(401).json({ error: "Invalid email or password." });
+        return;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
     if (!passwordMatch) {
-        return res.status(401).json({ error: "Invalid email or password." });
+        res.status(401).json({ error: "Invalid email or password." });
+        return;
     }
 
     const payload = {
@@ -37,11 +41,16 @@ export async function handleLogin (req, res){
         email: user.email,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    const jwtSecret: string | undefined = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        throw new Error("JWT_SECRET not set in environment");
+    }
+
+    const token = jwt.sign(payload, jwtSecret, {
         expiresIn: "1h",
     });
 
-    return res.json({
+    res.json({
         access_token: token,
         token_type: "Bearer",
         expires_in: 3600,
