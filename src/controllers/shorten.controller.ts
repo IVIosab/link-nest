@@ -1,12 +1,12 @@
 import { db } from "../db/index.js";
-import { links } from "../db/schema.js";
+import { links } from "../db/schema";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
-import { createLinkSchema } from "../db/zodObjects.js";
+import { createLinkSchema } from "../utils/zod.js";
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
 
-export async function createShortLink(req: Request, res: Response): Promise<void> {
+export async function shortenLink(req: Request, res: Response): Promise<void> {
     if (!req.user) {
         res.status(401).json({ error: "Unauthorized" });
         return;

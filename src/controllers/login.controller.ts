@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "../db/index.js";
-import { users } from "../db/schema.js";
-import { emailPasswordSchema } from "../db/zodObjects.js";
+import { users } from "../db/schema";
+import { emailPasswordSchema } from "../utils/zod.js";
 import bcrypt from "bcrypt";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export async function handleLogin (req: Request, res: Response): Promise<void>{
+export async function loginUser (req: Request, res: Response): Promise<void>{
     const parseResult = emailPasswordSchema.safeParse(req.body);
     if (!parseResult.success) {
         res.status(400).json({ error: parseResult.error.flatten() });

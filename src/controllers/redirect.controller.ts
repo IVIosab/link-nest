@@ -1,5 +1,6 @@
+
 import { db } from "../db/index.js";
-import { links, visits } from "../db/schema.js";
+import { links, visits } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
@@ -17,7 +18,7 @@ function getRequestInfo(req: Request) {
     };
 }
 
-export async function handleRedirect(req: Request, res: Response): Promise<void> {
+export async function redirectLink(req: Request, res: Response): Promise<void> {
     const link = req.link;
     if (!link) {
         res.status(404).send("Link not found.");

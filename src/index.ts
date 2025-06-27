@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
-import router from "./routes/index.js";
-import { logger } from "./middlewares/logger.js";
-import { generalRateLimiter } from "./middlewares/rateLimit.js";
+import router from "./routes";
+import { generalRateLimiter, logger } from "./middlewares";
 
 const app = express();
 const PORT = process.env.PORT || 3000;

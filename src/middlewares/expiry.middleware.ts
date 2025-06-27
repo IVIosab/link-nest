@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { db } from "../db/index.js";
-import { links } from "../db/schema.js";
+import { links } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { Link } from "../db/types.js";
 
 export async function checkExpiry(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { slug } = req.params;

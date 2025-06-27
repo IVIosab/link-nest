@@ -1,19 +1,17 @@
 import express from "express";
-import { createShortLink } from "./shorten.js";
-import { handleRedirect } from "./redirect.js";
-import { validate } from "../middlewares/validate.js";
-import { checkExpiry } from "../middlewares/expiry.js";
-import { createLinkSchema, slugParamSchema } from "../db/zodObjects.js";
-import { shortenLimiter, authLimiter } from "../middlewares/rateLimit.js";
-import { authenticateJWT } from "../middlewares/auth.js";
-import { handleRegister } from "./register.js";
-import { handleLogin } from "./login.js";
+import { validate, checkExpiry, authenticateJWT, shortenLimiter, authLimiter } from "../middlewares";
+import { createLinkSchema, slugParamSchema } from "../utils/zod.js";
+import { loginUser } from "../controllers/login.controller.js";
+import { registerUser } from "../controllers/register.controller.js";
+import { shortenLink } from "../controllers/shorten.controller.js";
+import { redirectLink } from "../controllers/redirect.controller.js";
 
 const router = express.Router();
 
-router.post("/shorten", authenticateJWT, shortenLimiter, validate({ body: createLinkSchema }), createShortLink);
-router.get("/:slug", validate({ params: slugParamSchema }), checkExpiry, handleRedirect);
-router.post("/register", authLimiter, handleRegister);
-router.post("/login", authLimiter, handleLogin);
+router.use('/login', authLimiter, loginUser);
+router.use('/register', authLimiter, registerUser);
+router.use('/shorten', authenticateJWT, shortenLimiter, validate({ body: createLinkSchema }), shortenLink);
+router.use('/:slug', validate({ params: slugParamSchema }), checkExpiry, redirectLink);
+
 
 export default router;
